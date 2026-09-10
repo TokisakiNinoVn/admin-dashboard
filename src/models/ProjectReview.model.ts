@@ -18,6 +18,7 @@ export type ProjectReview = {
     visibility: string;
     status: string;
     updated_at: string;
+    folder_name: string;
 };
 
 export default ProjectReview;

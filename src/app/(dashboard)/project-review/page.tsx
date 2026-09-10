@@ -9,9 +9,19 @@ import {
   Pagination,
   Divider,
   message,
+  Input,
+  Button,
+  Popover,
+  Badge,
 } from "antd";
 
-import { FolderOpen, List as ListIcon } from "lucide-react";
+import {
+  FolderOpen,
+  List as ListIcon,
+  Search as SearchIcon,
+  Filter as FilterIcon,
+  RotateCw as ReloadIcon,
+} from "lucide-react";
 
 import projectsData from "@/data-sheet/project-reviews.json";
 import { ProjectReview } from "@/models/ProjectReview.model";
@@ -30,7 +40,7 @@ const formatProjectDate = (date: string | Date) =>
   formatDate(date instanceof Date ? date.toISOString() : date);
 
 const GRID_GAP = 20; // px, khoảng cách giữa các card
-const MIN_CARD_WIDTH = 250; // px, bề rộng đẹp nhất / nhỏ nhất cho 1 card
+const MIN_CARD_WIDTH = 200; // px, bề rộng đẹp nhất / nhỏ nhất cho 1 card
 const DEFAULT_COLUMNS = 4;
 const MIN_COLUMNS = 1;
 const MAX_COLUMNS = 6; // trần cứng, không phụ thuộc bề rộng màn hình
@@ -38,22 +48,21 @@ const MAX_COLUMNS = 6; // trần cứng, không phụ thuộc bề rộng màn h
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = ["10", "20", "50", "100"];
 
-// Khoảng cách để phần đầu section không bị dính sát mép trên khi scroll tới (nếu sau này có sticky header)
 const SCROLL_OFFSET = 24;
 
-// Thêm mẫu mới ở đây khi tạo thêm SampleCardX
 const SAMPLE_TYPES = [
   { key: "mau-1", label: "Mẫu 1", Card: SampleCard1 },
   { key: "mau-2", label: "Mẫu 2", Card: SampleCard2 },
   { key: "mau-3", label: "Mẫu 3", Card: SampleCard3 },
   { key: "mau-4", label: "Mẫu 4", Card: SampleCard4 },
-  { key: "mau-5", label: "Mẫu 5", Card: SampleCard5 },
-  { key: "mau-6", label: "Mẫu 6", Card: SampleCard6 },
+  // { key: "mau-5", label: "Mẫu 5", Card: SampleCard5 },
+  // { key: "mau-6", label: "Mẫu 6", Card: SampleCard6 },
 ] as const;
 
 export default function Review() {
   const [projects, setProjects] = useState<ProjectReview[]>(projectsData);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [activeSection, setActiveSection] = useState<string>(SAMPLE_TYPES[0].key);
 
   // Lưu ref DOM của từng section theo key để mục lục có thể scroll tới
@@ -64,13 +73,15 @@ export default function Review() {
     [projects]
   );
 
-  const filteredProjects = useMemo(
-    () =>
-      statusFilter === "all"
-        ? projects
-        : projects.filter((p) => p.status === statusFilter),
-    [projects, statusFilter]
-  );
+  const filteredProjects = useMemo(() => {
+    const keyword = searchTerm.trim().toLowerCase();
+
+    return projects.filter((p) => {
+      const matchStatus = statusFilter === "all" || p.status === statusFilter;
+      const matchKeyword = !keyword || p.name?.toLowerCase().includes(keyword);
+      return matchStatus && matchKeyword;
+    });
+  }, [projects, statusFilter, searchTerm]);
 
   const handleView = (project: ProjectReview) => {
     console.info(`Xem dự án: ${project.name} (ID: ${project.id})`);
@@ -85,10 +96,18 @@ export default function Review() {
     console.info("Đã xóa dự án");
   };
 
+  const handleReload = () => {
+    setProjects(projectsData);
+    setStatusFilter("all");
+    setSearchTerm("");
+    message.success("Đã tải lại danh sách dự án");
+  };
+
+  // Nhảy thẳng đến section, không cuộn mượt để tránh cảm giác lag
   const scrollToSection = (key: string) => {
     const el = sectionRefs.current[key];
     if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    el.scrollIntoView({ behavior: "auto", block: "start" });
   };
 
   // Theo dõi section nào đang hiển thị trong viewport để highlight mục lục tương ứng
@@ -122,30 +141,45 @@ export default function Review() {
   }, [filteredProjects.length]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:pr-44">
+    <div className="w-full bg-white ">
+      <main className="mx-auto w-full px-4 py-10 sm:px-6 lg:px-8 ">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <Title level={3} style={{ marginBottom: 2, letterSpacing: -0.3 }}>
-              Dự án cần đánh giá
-            </Title>
-            <Text>
-              {filteredProjects.length} / {projects.length} dự án
-              {statusFilter === "all" ? " đang chờ review" : " phù hợp bộ lọc"}
-            </Text>
-          </div>
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Input
+            allowClear
+            placeholder="Tìm kiếm dự án theo tên..."
+            prefix={<SearchIcon size={16} color="#8a94a6" />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ maxWidth: 360 }}
+          />
 
-          {statuses.length > 1 && (
-            <Segmented
-              value={statusFilter}
-              onChange={(v) => setStatusFilter(v as string)}
-              options={[
-                { label: "Tất cả", value: "all" },
-                ...statuses.map((s) => ({ label: String(s), value: s })),
-              ]}
-            />
-          )}
+          <div className="flex items-center gap-2">
+            {statuses.length > 1 && (
+              <Popover
+                trigger="click"
+                placement="bottomRight"
+                content={
+                  <Segmented
+                    value={statusFilter}
+                    onChange={(v) => setStatusFilter(v as string)}
+                    options={[
+                      { label: "Tất cả", value: "all" },
+                      ...statuses.map((s) => ({ label: String(s), value: s })),
+                    ]}
+                  />
+                }
+              >
+                <Badge dot={statusFilter !== "all"} offset={[-4, 4]}>
+                  <Button icon={<FilterIcon size={15} />}>Bộ lọc</Button>
+                </Badge>
+              </Popover>
+            )}
+
+            <Button icon={<ReloadIcon size={15} />} onClick={handleReload}>
+              Tải lại
+            </Button>
+          </div>
         </div>
 
         {filteredProjects.length === 0 ? (
@@ -347,11 +381,11 @@ function SampleSection({
   const handleColumnsChange = (value: number | null) => {
     const next = value ?? DEFAULT_COLUMNS;
     setColumnsInput(next);
-    if (next > maxColumnsByWidth) {
-      messageApi.warning(
-        `Với bề rộng màn hình hiện tại, tối đa chỉ hiển thị đẹp được ${maxColumnsByWidth} cột (mỗi card tối thiểu ${MIN_CARD_WIDTH}px). Đã tự động điều chỉnh.`
-      );
-    }
+    // if (next > maxColumnsByWidth) {
+    //   messageApi.warning(
+    //     `Với bề rộng màn hình hiện tại, tối đa chỉ hiển thị đẹp được ${maxColumnsByWidth} cột (mỗi card tối thiểu ${MIN_CARD_WIDTH}px). Đã tự động điều chỉnh.`
+    //   );
+    // }
   };
 
   // Reset về trang 1 nếu danh sách/pageSize thay đổi khiến trang hiện tại không còn hợp lệ
@@ -392,17 +426,6 @@ function SampleSection({
           />
         </div>
       </div>
-
-      {/* <div className="mb-4">
-        <Text type="secondary" style={{ fontSize: 12 }}>
-          Tối đa {maxColumnsByWidth} cột với bề rộng hiện tại (min {MIN_CARD_WIDTH}px/card).
-        </Text>
-        {isClamped && (
-          <Text type="warning" style={{ fontSize: 12, marginLeft: 8 }}>
-            Đang hiển thị {effectiveColumns} cột thay vì {columnsInput} để tránh vỡ layout.
-          </Text>
-        )}
-      </div> */}
 
       {/* key thay đổi theo số cột/trang/kích thước trang -> ép render lại toàn bộ grid, tránh layout bị lỗi khi thay đổi */}
       <div
