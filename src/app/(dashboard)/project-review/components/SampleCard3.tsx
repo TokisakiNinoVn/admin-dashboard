@@ -15,6 +15,7 @@ import {
     MapPin,
     SquarePen,
     Trash,
+    Folder
 } from "lucide-react";
 
 const { Paragraph, Text } = Typography;
@@ -65,37 +66,21 @@ export default function SampleCard3({
         >
             {/* Project name */}
             <Paragraph
-                ellipsis={{ rows: 2 }}
+                ellipsis={{ rows: 1 }}
                 style={{
                     marginBottom: 8,
                     fontWeight: 600,
                     fontSize: 15,
                     lineHeight: "22px",
-                    minHeight: "44px",
+                    minHeight: "22px",
                 }}
             >
                 {project.name}
             </Paragraph>
 
-            {/* Updated info */}
-            <div className="mb-3 flex items-center gap-1.5">
-                <Clock size={16} className="text-slate-400" />
-                <Text type="secondary" style={{ fontSize: 12, fontWeight: 500 }}>
-                    Cập nhật {formatDate(project.updated_at)}
-                </Text>
-            </div>
-
             {/* Owner + media stats */}
-            <div className="flex items-center justify-between border-t border-zinc-100 pt-3">
-                <Space size={8}>
-                    <Avatar size={22} className="bg-indigo-500 text-[11px]">
-                        {project.owner.name?.charAt(0)?.toUpperCase()}
-                    </Avatar>
+            <div className="flex items-center justify-between">
 
-                    <Text type="secondary" style={{ fontSize: 12.5 }}>
-                        {project.owner.name}
-                    </Text>
-                </Space>
 
                 <Space size="middle">
                     <Text className="text-md flex items-center gap-1">
@@ -108,44 +93,62 @@ export default function SampleCard3({
                         {project.media.videos}
                     </Text>
                 </Space>
+
+                <Text className="text-md flex items-center gap-1">
+                    <Folder size={16} />
+                    {project.folder_name}
+                </Text>
             </div>
 
-            {/* Actions */}
-            <div className="mt-3 flex items-center justify-end gap-2 border-t border-zinc-100 pt-3">
-                <Tooltip title="Xem chi tiết">
-                    <Button
-                        type="default"
-                        shape="circle"
-                        icon={<Eye size={18} />}
-                        onClick={() => onView(project)}
-                    />
-                </Tooltip>
+            <div className="mt-3 flex items-center justify-between border-t border-zinc-100 pt-3">
+                {/* Owner */}
+                <Space size={8}>
+                    <Avatar size={22} className="text-[11px]">
+                        {project.owner.name?.charAt(0)?.toUpperCase()}
+                    </Avatar>
 
-                <Tooltip title="Chỉnh sửa">
-                    <Button
-                        type="default"
-                        shape="circle"
-                        icon={<SquarePen size={16} />}
-                        onClick={() => onUpdate(project)}
-                    />
-                </Tooltip>
+                    <Text type="secondary" style={{ fontSize: 12.5 }}>
+                        {project.owner.name}
+                    </Text>
+                </Space>
 
-                <Popconfirm
-                    title="Xóa dự án"
-                    description="Bạn có chắc muốn xóa dự án này?"
-                    onConfirm={() => onDelete(project.id)}
-                    okText="Xóa"
-                    cancelText="Hủy"
-                    okButtonProps={{ danger: true }}
-                >
-                    <Tooltip title="Xóa">
+                {/* Actions */}
+                <div className="flex items-center gap-2">
+                    <Tooltip title="Xem chi tiết">
                         <Button
-                            danger
+                            type="default"
                             shape="circle"
-                            icon={<Trash size={16} />}
+                            icon={<Eye size={17} />}
+                            onClick={() => onView(project)}
                         />
                     </Tooltip>
-                </Popconfirm>
+
+                    <Tooltip title="Chỉnh sửa">
+                        <Button
+                            type="default"
+                            shape="circle"
+                            icon={<SquarePen size={16} />}
+                            onClick={() => onUpdate(project)}
+                        />
+                    </Tooltip>
+
+                    <Popconfirm
+                        title="Xóa dự án"
+                        description="Bạn có chắc muốn xóa dự án này?"
+                        onConfirm={() => onDelete(project.id)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <Tooltip title="Xóa">
+                            <Button
+                                danger
+                                shape="circle"
+                                icon={<Trash size={16} />}
+                            />
+                        </Tooltip>
+                    </Popconfirm>
+                </div>
             </div>
         </Card>
     );

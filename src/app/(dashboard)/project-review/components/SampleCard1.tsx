@@ -20,22 +20,6 @@ import {
 const { Paragraph, Text } = Typography;
 import type ProjectReview from "@/models/ProjectReview.model";
 
-// export interface Project {
-//     id: string | number;
-//     name: string;
-//     thumbnail_url: string;
-//     status: string;
-//     location: string;
-//     updated_at: string;
-//     owner: {
-//         name: string;
-//     };
-//     media: {
-//         images: number;
-//         videos: number;
-//     };
-// }
-
 interface ProjectCardProps {
     project: ProjectReview;
     statusTag: (status: string) => React.ReactNode;
@@ -56,7 +40,7 @@ export default function SampleCard1({
     return (
         <Card
             hoverable={false}
-            className="group relative overflow-hidden !rounded-2xl border border-zinc-100 shadow-[0_1px_2px_rgba(16,24,40,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(16,24,40,0.16)]"
+            className="group relative overflow-hidden rounded-[1rem] shadow-[0_1px_2px_rgba(16,24,40,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(16,24,40,0.16)]"
             styles={{ body: { padding: 16 } }}
             cover={
                 <div className="relative aspect-video overflow-hidden bg-zinc-100">
@@ -80,7 +64,7 @@ export default function SampleCard1({
             }
         >
             {/* Hover overlay */}
-            <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 rounded-2xl bg-white/70 opacity-0 backdrop-blur-[4px] transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+            <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 rounded-lg bg-white/70 opacity-0 backdrop-blur-[4px] transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
                 {/* Updated info */}
                 <div className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 shadow-sm">
                     <Clock size={18} className="text-slate-500" />
@@ -144,13 +128,13 @@ export default function SampleCard1({
 
             {/* Project name */}
             <Paragraph
-                ellipsis={{ rows: 2 }}
+                ellipsis={{ rows: 1 }}
                 style={{
                     marginBottom: 10,
                     fontWeight: 600,
                     fontSize: 15,
                     lineHeight: "22px",
-                    minHeight: "44px",
+                    minHeight: "20px",
                 }}
             >
                 {project.name}
