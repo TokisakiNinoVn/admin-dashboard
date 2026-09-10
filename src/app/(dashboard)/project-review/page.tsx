@@ -119,7 +119,7 @@ export default function Review() {
               <Col key={project.id} xs={24} sm={12} lg={8} xl={6}>
                 <Card
                   hoverable={false}
-                  className="group overflow-hidden !rounded-2xl border border-zinc-100 shadow-[0_1px_2px_rgba(16,24,40,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(16,24,40,0.16)]"
+                  className="group relative overflow-hidden !rounded-2xl border border-zinc-100 shadow-[0_1px_2px_rgba(16,24,40,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(16,24,40,0.16)]"
                   styles={{ body: { padding: 16 } }}
                   cover={
                     <div className="relative aspect-video overflow-hidden bg-zinc-100">
@@ -132,15 +132,77 @@ export default function Review() {
                       <div className="absolute left-3 top-3">
                         {statusTag(project.status)}
                       </div>
+                      {/* Location nổi bật, đặt sát mép dưới ảnh */}
+                      <div className="absolute bottom-2.5 left-3 z-10 flex max-w-[calc(100%-24px)] items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-zinc-800 shadow-[0_2px_6px_rgba(16,24,40,0.18)] backdrop-blur-sm">
+                        <EnvironmentOutlined className="text-indigo-600" />
+                        <span className="truncate">{project.location}</span>
+                      </div>
                     </div>
                   }
                 >
-                  {/* <Paragraph
-                    ellipsis={{ rows: 2 }}
-                    style={{ marginBottom: 10, fontWeight: 600, fontSize: 15 }}
-                  >
-                    {project.name}
-                  </Paragraph> */}
+                  {/* Lớp phủ blur + action buttons, chỉ hiện khi hover vào card */}
+                  <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 rounded-2xl bg-white/70 opacity-0 backdrop-blur-[4px] transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+                    {/* Info */}
+                    <div className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 shadow-sm">
+                      <ClockCircleOutlined className="text-slate-500" />
+
+                      <Text
+                        type="secondary"
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 500,
+                          color: "#475569",
+                        }}
+                      >
+                        Cập nhật {formatDate(project.updated_at)}
+                      </Text>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                      <Tooltip title="Xem chi tiết">
+                        <Button
+                          type="default"
+                          shape="circle"
+                          size="large"
+                          icon={<EyeOutlined />}
+                          onClick={() => handleView(project)}
+                          className="shadow-md transition-transform hover:scale-105"
+                        />
+                      </Tooltip>
+
+                      <Tooltip title="Chỉnh sửa">
+                        <Button
+                          type="default"
+                          shape="circle"
+                          size="large"
+                          icon={<EditOutlined />}
+                          onClick={() => handleUpdate(project)}
+                          className="shadow-md transition-transform hover:scale-105"
+                        />
+                      </Tooltip>
+
+                      <Popconfirm
+                        title="Xóa dự án"
+                        description="Bạn có chắc muốn xóa dự án này?"
+                        onConfirm={() => handleDelete(project.id)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                      >
+                        <Tooltip title="Xóa">
+                          <Button
+                            danger
+                            shape="circle"
+                            size="large"
+                            icon={<DeleteOutlined />}
+                            className="shadow-md transition-transform hover:scale-105"
+                          />
+                        </Tooltip>
+                      </Popconfirm>
+                    </div>
+                  </div>
+
                   <Paragraph
                     ellipsis={{ rows: 2 }}
                     style={{
@@ -154,11 +216,26 @@ export default function Review() {
                     {project.name}
                   </Paragraph>
 
-                  <Space direction="vertical" size={8} style={{ width: "100%" }}>
+                  {/* <Space size="middle">
                     <Text className="text-sm">
-                      <EnvironmentOutlined className="mr-1.5 text-black" />
-                      {project.location}
+                      <PictureOutlined className="mr-1 text-black" />
+                      {project.media.images}
                     </Text>
+                    <Text className="text-sm">
+                      <VideoCameraOutlined className="mr-1 text-black" />
+                      {project.media.videos}
+                    </Text>
+                  </Space> */}
+
+                  <div className="mt-2.5 flex items-center justify-between border-t border-zinc-100 pt-2">
+                    <Space size={8}>
+                      <Avatar size={22} className="bg-indigo-500 text-[11px]">
+                        {project.owner.name?.charAt(0)?.toUpperCase()}
+                      </Avatar>
+                      <Text type="secondary" style={{ fontSize: 12.5 }}>
+                        {project.owner.name}
+                      </Text>
+                    </Space>
 
                     <Space size="middle">
                       <Text className="text-sm">
@@ -170,63 +247,10 @@ export default function Review() {
                         {project.media.videos}
                       </Text>
                     </Space>
-                  </Space>
-
-                  <div className="mt-2.5 flex items-center justify-between border-t border-zinc-100 pt-2">
-                    <Space size={8}>
-                      <Avatar size={22} className="bg-indigo-500 text-[11px]">
-                        {project.owner.name?.charAt(0)?.toUpperCase()}
-                      </Avatar>
-                      <Text type="secondary" style={{ fontSize: 12.5 }}>
-                        {project.owner.name}
-                      </Text>
-                    </Space>
-                    <Text type="secondary" style={{ fontSize: 12 }}>
+                    {/* <Text type="secondary" style={{ fontSize: 12 }}>
                       <ClockCircleOutlined className="mr-1" />
                       {formatDate(project.updated_at)}
-                    </Text>
-                  </div>
-
-                  <div className="mt-3.5 flex items-center justify-between border-t border-zinc-100 pt-2">
-                    <Tooltip title="Xem chi tiết">
-                      <Button
-                        type="text"
-                        size="small"
-                        icon={<EyeOutlined />}
-                        onClick={() => handleView(project)}
-                        className="text-zinc-600 hover:!text-indigo-600"
-                      >
-                        Xem
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Chỉnh sửa">
-                      <Button
-                        type="text"
-                        size="small"
-                        icon={<EditOutlined />}
-                        onClick={() => handleUpdate(project)}
-                        className="text-zinc-600 hover:!text-indigo-600"
-                      >
-                        Sửa
-                      </Button>
-                    </Tooltip>
-                    <Popconfirm
-                      title="Xóa dự án"
-                      description="Bạn có chắc muốn xóa dự án này?"
-                      onConfirm={() => handleDelete(project.id)}
-                      okText="Xóa"
-                      cancelText="Hủy"
-                      okButtonProps={{ danger: true }}
-                    >
-                      <Button
-                        type="text"
-                        size="small"
-                        danger
-                        icon={<DeleteOutlined />}
-                      >
-                        Xóa
-                      </Button>
-                    </Popconfirm>
+                    </Text> */}
                   </div>
                 </Card>
               </Col>
