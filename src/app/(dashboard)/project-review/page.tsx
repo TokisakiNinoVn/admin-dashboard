@@ -68,10 +68,10 @@ export default function Review() {
         {/* Header */}
         <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Title level={3} style={{ marginBottom: 4, letterSpacing: -0.3 }}>
+            <Title level={3} style={{ marginBottom: 2, letterSpacing: -0.3 }}>
               Dự án cần đánh giá
             </Title>
-            <Text type="secondary">
+            <Text>
               {filteredProjects.length}
               {statusFilter === "all" ? "" : ""} / {projects.length} dự án
               {statusFilter === "all" ? " đang chờ review" : " phù hợp bộ lọc"}
@@ -119,7 +119,6 @@ export default function Review() {
               <Col key={project.id} xs={24} sm={12} lg={8} xl={6}>
                 <Card
                   hoverable={false}
-                  bordered={false}
                   className="group overflow-hidden !rounded-2xl border border-zinc-100 shadow-[0_1px_2px_rgba(16,24,40,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(16,24,40,0.16)]"
                   styles={{ body: { padding: 16 } }}
                   cover={
@@ -136,32 +135,44 @@ export default function Review() {
                     </div>
                   }
                 >
-                  <Paragraph
+                  {/* <Paragraph
                     ellipsis={{ rows: 2 }}
                     style={{ marginBottom: 10, fontWeight: 600, fontSize: 15 }}
+                  >
+                    {project.name}
+                  </Paragraph> */}
+                  <Paragraph
+                    ellipsis={{ rows: 2 }}
+                    style={{
+                      marginBottom: 10,
+                      fontWeight: 600,
+                      fontSize: 15,
+                      lineHeight: '22px',
+                      minHeight: '44px',
+                    }}
                   >
                     {project.name}
                   </Paragraph>
 
                   <Space direction="vertical" size={8} style={{ width: "100%" }}>
-                    <Text type="secondary" className="text-sm">
-                      <EnvironmentOutlined className="mr-1.5 text-zinc-400" />
+                    <Text className="text-sm">
+                      <EnvironmentOutlined className="mr-1.5 text-black" />
                       {project.location}
                     </Text>
 
                     <Space size="middle">
-                      <Text type="secondary" className="text-sm">
-                        <PictureOutlined className="mr-1 text-zinc-400" />
-                        {project.media.images} ảnh
+                      <Text className="text-sm">
+                        <PictureOutlined className="mr-1 text-black" />
+                        {project.media.images}
                       </Text>
-                      <Text type="secondary" className="text-sm">
-                        <VideoCameraOutlined className="mr-1 text-zinc-400" />
-                        {project.media.videos} video
+                      <Text className="text-sm">
+                        <VideoCameraOutlined className="mr-1 text-black" />
+                        {project.media.videos}
                       </Text>
                     </Space>
                   </Space>
 
-                  <div className="mt-3.5 flex items-center justify-between border-t border-zinc-100 pt-3">
+                  <div className="mt-2.5 flex items-center justify-between border-t border-zinc-100 pt-2">
                     <Space size={8}>
                       <Avatar size={22} className="bg-indigo-500 text-[11px]">
                         {project.owner.name?.charAt(0)?.toUpperCase()}
