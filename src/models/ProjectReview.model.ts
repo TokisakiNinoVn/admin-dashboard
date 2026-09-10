@@ -1,5 +1,3 @@
-
-
 type Owner = {
     name: string;
     email: string;
