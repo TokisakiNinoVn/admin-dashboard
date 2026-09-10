@@ -19,31 +19,31 @@ export const menuItems = [
     type: 'group',
     label: 'Nội dung',
     children: [
-    {
-      key: '/projects',
-      icon: <FolderOutlined />,
-      label: 'Quản lý dự án',
-    },
+      {
+        key: '/projects',
+        icon: <FolderOutlined />,
+        label: 'Quản lý dự án',
+      },
 
-    {
-      key: '/projects/review',
-      icon: <FileSearchOutlined />,
-      label: 'Dự án cần đánh giá',
-    },
+      {
+        key: '/project-review',
+        icon: <FileSearchOutlined />,
+        label: 'Dự án cần đánh giá',
+      },
 
-    {
-      key: '/projects/mine',
-      icon: <FileOutlined />,
-      label: 'Dự án của tôi',
-    },
+      {
+        key: '/projects/mine',
+        icon: <FileOutlined />,
+        label: 'Dự án của tôi',
+      },
 
-    {
-      key: '/media',
-      icon: <PictureOutlined />,
-      label: 'Quản lý Media',
-    },
-  ],
-},
+      {
+        key: '/media',
+        icon: <PictureOutlined />,
+        label: 'Quản lý Media',
+      },
+    ],
+  },
   {
     type: 'group',
     label: 'Danh mục',
