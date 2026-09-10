@@ -26,6 +26,9 @@ import SampleCard6 from "./components/SampleCard6";
 
 const { Title, Text } = Typography;
 
+const formatProjectDate = (date: string | Date) =>
+  formatDate(date instanceof Date ? date.toISOString() : date);
+
 const GRID_GAP = 20; // px, khoảng cách giữa các card
 const MIN_CARD_WIDTH = 250; // px, bề rộng đẹp nhất / nhỏ nhất cho 1 card
 const DEFAULT_COLUMNS = 4;
@@ -416,7 +419,7 @@ function SampleSection({
             key={project.id}
             project={project}
             statusTag={statusTag}
-            formatDate={formatDate}
+            formatDate={formatProjectDate}
             onView={onView}
             onUpdate={onUpdate}
             onDelete={onDelete}
