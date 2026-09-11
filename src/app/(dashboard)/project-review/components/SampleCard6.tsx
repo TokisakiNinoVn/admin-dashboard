@@ -77,13 +77,13 @@ export default function SampleCard3({
         >
             {/* Project name */}
             <Paragraph
-                ellipsis={{ rows: 2 }}
+                ellipsis={{ rows: 1 }}
                 style={{
                     marginBottom: 8,
                     fontWeight: 600,
                     fontSize: 15,
                     lineHeight: "22px",
-                    minHeight: "44px",
+                    minHeight: "22px",
                 }}
             >
                 {project.name}
@@ -130,6 +130,7 @@ export default function SampleCard3({
                         shape="circle"
                         icon={<Eye size={18} />}
                         onClick={() => onView(project)}
+                        className="mr-5"
                     />
                 </Tooltip>
 
@@ -139,6 +140,7 @@ export default function SampleCard3({
                         shape="circle"
                         icon={<SquarePen size={16} />}
                         onClick={() => onUpdate(project)}
+                        className="mr-5"
                     />
                 </Tooltip>
 

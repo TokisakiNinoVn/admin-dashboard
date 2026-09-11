@@ -7,7 +7,6 @@ import {
   Segmented,
   InputNumber,
   Pagination,
-  Divider,
   message,
   Input,
   Button,
@@ -17,10 +16,12 @@ import {
 
 import {
   FolderOpen,
-  List as ListIcon,
   Search as SearchIcon,
   Filter as FilterIcon,
   RotateCw as ReloadIcon,
+  Smartphone,
+  Tablet,
+  Monitor,
 } from "lucide-react";
 
 import projectsData from "@/data-sheet/project-reviews.json";
@@ -48,25 +49,60 @@ const MAX_COLUMNS = 6; // trần cứng, không phụ thuộc bề rộng màn h
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = ["10", "20", "50", "100"];
 
-const SCROLL_OFFSET = 24;
-
 const SAMPLE_TYPES = [
   { key: "mau-1", label: "Mẫu 1", Card: SampleCard1 },
   { key: "mau-2", label: "Mẫu 2", Card: SampleCard2 },
   { key: "mau-3", label: "Mẫu 3", Card: SampleCard3 },
   { key: "mau-4", label: "Mẫu 4", Card: SampleCard4 },
-  // { key: "mau-5", label: "Mẫu 5", Card: SampleCard5 },
-  // { key: "mau-6", label: "Mẫu 6", Card: SampleCard6 },
+  { key: "mau-5", label: "Mẫu 5", Card: SampleCard5 },
+  { key: "mau-6", label: "Mẫu 6", Card: SampleCard6 },
 ] as const;
+
+type DeviceKey = "mobile" | "tablet" | "pc";
+
+const DEVICE_OPTIONS: { label: React.ReactNode; value: DeviceKey }[] = [
+  {
+    value: "mobile",
+    label: (
+      <span className="flex items-center gap-1.5 px-1">
+        <Smartphone size={14} />
+        Mobile
+      </span>
+    ),
+  },
+  {
+    value: "tablet",
+    label: (
+      <span className="flex items-center gap-1.5 px-1">
+        <Tablet size={14} />
+        Tablet
+      </span>
+    ),
+  },
+  {
+    value: "pc",
+    label: (
+      <span className="flex items-center gap-1.5 px-1">
+        <Monitor size={14} />
+        PC
+      </span>
+    ),
+  },
+];
+
+// Bề rộng mô phỏng cho từng thiết bị khi xem trước responsive
+const DEVICE_MAX_WIDTH: Record<DeviceKey, number | string> = {
+  mobile: 390,
+  tablet: 834,
+  pc: "100%",
+};
 
 export default function Review() {
   const [projects, setProjects] = useState<ProjectReview[]>(projectsData);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [activeSection, setActiveSection] = useState<string>(SAMPLE_TYPES[0].key);
-
-  // Lưu ref DOM của từng section theo key để mục lục có thể scroll tới
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [activeSample, setActiveSample] = useState<string>(SAMPLE_TYPES[0].key);
+  const [device, setDevice] = useState<DeviceKey>("pc");
 
   const statuses = useMemo(
     () => Array.from(new Set(projects.map((p) => p.status))),
@@ -82,6 +118,9 @@ export default function Review() {
       return matchStatus && matchKeyword;
     });
   }, [projects, statusFilter, searchTerm]);
+
+  const currentSample =
+    SAMPLE_TYPES.find((s) => s.key === activeSample) ?? SAMPLE_TYPES[0];
 
   const handleView = (project: ProjectReview) => {
     console.info(`Xem dự án: ${project.name} (ID: ${project.id})`);
@@ -103,48 +142,13 @@ export default function Review() {
     message.success("Đã tải lại danh sách dự án");
   };
 
-  // Nhảy thẳng đến section, không cuộn mượt để tránh cảm giác lag
-  const scrollToSection = (key: string) => {
-    const el = sectionRefs.current[key];
-    if (!el) return;
-    el.scrollIntoView({ behavior: "auto", block: "start" });
-  };
-
-  // Theo dõi section nào đang hiển thị trong viewport để highlight mục lục tương ứng
-  useEffect(() => {
-    if (filteredProjects.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-        if (visible[0]?.target) {
-          const key = (visible[0].target as HTMLElement).dataset.sectionKey;
-          if (key) setActiveSection(key);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "-15% 0px -70% 0px",
-        threshold: 0,
-      }
-    );
-
-    SAMPLE_TYPES.forEach((sample) => {
-      const el = sectionRefs.current[sample.key];
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [filteredProjects.length]);
+  const isPreviewingDevice = device !== "pc";
 
   return (
-    <div className="w-full bg-white ">
-      <main className="mx-auto w-full px-4 py-10 sm:px-6 lg:px-8 ">
+    <div className="w-full bg-white">
+      <main className="mx-auto w-full px-4 py-10 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Input
             allowClear
             placeholder="Tìm kiếm dự án theo tên..."
@@ -182,6 +186,21 @@ export default function Review() {
           </div>
         </div>
 
+        {/* Thanh chuyển đổi mẫu + xem trước responsive */}
+        <div className="mb-8 flex flex-col gap-3 rounded-2xl border border-[#e4e7ec] bg-[#fafbfc] p-3 sm:flex-row sm:items-center sm:justify-between">
+          <Segmented
+            value={activeSample}
+            onChange={(v) => setActiveSample(v as string)}
+            options={SAMPLE_TYPES.map((s) => ({ label: s.label, value: s.key }))}
+          />
+
+          <Segmented
+            value={device}
+            onChange={(v) => setDevice(v as DeviceKey)}
+            options={DEVICE_OPTIONS}
+          />
+        </div>
+
         {filteredProjects.length === 0 ? (
           <Empty
             image={<FolderOpen style={{ fontSize: 48, color: "#c1c5cd" }} />}
@@ -201,118 +220,32 @@ export default function Review() {
             }}
           />
         ) : (
-          <div className="flex flex-col gap-10">
-            {SAMPLE_TYPES.map((sample, idx) => (
-              <div
-                key={sample.key}
-                data-section-key={sample.key}
-                ref={(el) => {
-                  sectionRefs.current[sample.key] = el;
-                }}
-                style={{ scrollMarginTop: SCROLL_OFFSET }}
-              >
-                {idx > 0 && <Divider style={{ margin: "8px 0 32px" }} />}
-                <SampleSection
-                  title={sample.label}
-                  projects={filteredProjects}
-                  CardComponent={sample.Card}
-                  onView={handleView}
-                  onUpdate={handleUpdate}
-                  onDelete={handleDelete}
-                />
-              </div>
-            ))}
+          <div
+            className="mx-auto w-full transition-[max-width] duration-300 ease-in-out"
+            style={{
+              maxWidth: DEVICE_MAX_WIDTH[device],
+              ...(isPreviewingDevice && {
+                border: "1px solid #e4e7ec",
+                borderRadius: 20,
+                padding: "20px 16px",
+                boxShadow: "0 8px 24px rgba(16, 24, 40, 0.06)",
+                background: "#fff",
+              }),
+            }}
+          >
+            <SampleSection
+              key={currentSample.key}
+              title={currentSample.label}
+              projects={filteredProjects}
+              CardComponent={currentSample.Card}
+              onView={handleView}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+            />
           </div>
         )}
       </main>
-
-      {/* Mục lục các mẫu - cố định bên phải màn hình, chỉ hiện ở màn hình lớn */}
-      {filteredProjects.length > 0 && (
-        <TableOfContents
-          items={SAMPLE_TYPES}
-          activeKey={activeSection}
-          onSelect={scrollToSection}
-        />
-      )}
     </div>
-  );
-}
-
-interface TocItem {
-  key: string;
-  label: string;
-}
-
-interface TableOfContentsProps {
-  items: readonly TocItem[];
-  activeKey: string;
-  onSelect: (key: string) => void;
-}
-
-function TableOfContents({ items, activeKey, onSelect }: TableOfContentsProps) {
-  return (
-    <nav
-      className="hidden lg:flex"
-      style={{
-        position: "fixed",
-        top: "50%",
-        right: 24,
-        transform: "translateY(-50%)",
-        zIndex: 40,
-        flexDirection: "column",
-        gap: 4,
-        background: "#fff",
-        border: "1px solid #e4e7ec",
-        borderRadius: 12,
-        padding: "12px 8px",
-        boxShadow: "0 6px 20px rgba(16, 24, 40, 0.08)",
-        minWidth: 132,
-      }}
-      aria-label="Mục lục các mẫu"
-    >
-      {items.map((item) => {
-        const isActive = item.key === activeKey;
-        return (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => onSelect(item.key)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              border: "none",
-              background: isActive ? "#eef2ff" : "transparent",
-              color: isActive ? "#4338ca" : "#475467",
-              fontWeight: isActive ? 600 : 400,
-              fontSize: 13,
-              textAlign: "left",
-              padding: "6px 8px",
-              borderRadius: 8,
-              cursor: "pointer",
-              transition: "background 0.15s ease, color 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              if (!isActive) e.currentTarget.style.background = "#f5f6f8";
-            }}
-            onMouseLeave={(e) => {
-              if (!isActive) e.currentTarget.style.background = "transparent";
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                flexShrink: 0,
-                background: isActive ? "#4338ca" : "#d0d5dd",
-              }}
-            />
-            {item.label}
-          </button>
-        );
-      })}
-    </nav>
   );
 }
 
@@ -376,16 +309,10 @@ function SampleSection({
 
   // Số cột thực sự dùng để render = nhỏ hơn giữa số người dùng nhập và số tối đa theo bề rộng
   const effectiveColumns = Math.min(columnsInput, maxColumnsByWidth);
-  const isClamped = columnsInput > maxColumnsByWidth;
 
   const handleColumnsChange = (value: number | null) => {
     const next = value ?? DEFAULT_COLUMNS;
     setColumnsInput(next);
-    // if (next > maxColumnsByWidth) {
-    //   messageApi.warning(
-    //     `Với bề rộng màn hình hiện tại, tối đa chỉ hiển thị đẹp được ${maxColumnsByWidth} cột (mỗi card tối thiểu ${MIN_CARD_WIDTH}px). Đã tự động điều chỉnh.`
-    //   );
-    // }
   };
 
   // Reset về trang 1 nếu danh sách/pageSize thay đổi khiến trang hiện tại không còn hợp lệ
