@@ -86,43 +86,58 @@ export default function SampleCard2({
             </div>
 
             {/* Hover overlay */}
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-end justify-center gap-3 rounded-2xl bg-white/70 opacity-0 backdrop-blur-[4px] transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100 pr-3">
-                {/* Location */}
-                <div className="flex w-fit max-w-full items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-zinc-800 shadow-[0_2px_6px_rgba(16,24,40,0.18)] backdrop-blur-sm">
-                    <MapPin size={16} className="shrink-0 text-black" />
-                    <span className="truncate">{project.location}</span>
-                </div>
-                {/* Owner info */}
-                <div className="flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 shadow-sm">
-                    <Avatar size={22} className="bg-indigo-500 text-[11px]">
-                        {project.owner.name?.charAt(0)?.toUpperCase()}
-                    </Avatar>
-                    <Text
-                        type="secondary"
-                        style={{
-                            fontSize: 12.5,
-                            fontWeight: 500,
-                            color: "#475569",
-                        }}
-                    >
-                        {project.owner.name}
-                    </Text>
-                </div>
-                {/* Updated info */}
-                <div className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 shadow-sm">
-                    <Clock size={18} className="text-slate-500" />
-                    <Text
-                        type="secondary"
-                        style={{
-                            fontSize: 12,
-                            fontWeight: 500,
-                            color: "#475569",
-                        }}
-                    >
-                        Cập nhật {formatDate(project.updated_at)}
-                    </Text>
-                </div>
 
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-2xl bg-white/70 px-4 backdrop-blur-[4px] opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+                {/* Project Info */}
+                <div className="w-full max-w-[260px] rounded-xl border border-zinc-200/80 bg-white/95 p-3 shadow-[0_4px_16px_rgba(16,24,40,0.12)]">
+                    {/* Location */}
+                    <div className="flex items-center gap-2 border-b border-zinc-100 pb-2.5">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100">
+                            <MapPin size={16} className="text-zinc-600" />
+                        </div>
+
+                        <div className="min-w-0">
+                            <div className="text-[11px] font-medium text-zinc-400">
+                                Địa điểm
+                            </div>
+                            <div className="truncate text-xs font-semibold text-zinc-800">
+                                {project.location}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Owner */}
+                    <div className="flex items-center gap-2 border-b border-zinc-100 py-2.5">
+                        <Avatar size={32} className="shrink-0 bg-indigo-500 text-[11px]">
+                            {project.owner.name?.charAt(0)?.toUpperCase()}
+                        </Avatar>
+
+                        <div className="min-w-0">
+                            <div className="text-[11px] font-medium text-zinc-400">
+                                Người phụ trách
+                            </div>
+                            <div className="truncate text-xs font-semibold text-zinc-800">
+                                {project.owner.name}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Updated */}
+                    <div className="flex items-center gap-2 pt-2.5">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100">
+                            <Clock size={16} className="text-zinc-500" />
+                        </div>
+
+                        <div className="min-w-0">
+                            <div className="text-[11px] font-medium text-zinc-400">
+                                Cập nhật lần cuối
+                            </div>
+                            <div className="truncate text-xs font-semibold text-zinc-700">
+                                {formatDate(project.updated_at)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
@@ -168,6 +183,8 @@ export default function SampleCard2({
                     </Popconfirm>
                 </div>
             </div>
+
+
         </Card>
     );
 }
