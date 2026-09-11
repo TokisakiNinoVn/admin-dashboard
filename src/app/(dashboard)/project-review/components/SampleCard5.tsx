@@ -10,6 +10,7 @@ import {
     Clapperboard,
     Clock,
     Eye,
+    Folder,
     Image,
     MapPin,
     SquarePen,
@@ -87,11 +88,11 @@ export default function SampleCard2({
 
             {/* Hover overlay */}
 
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-2xl bg-white/70 px-4 backdrop-blur-[4px] opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-2xl bg-white/30 px-4 backdrop-blur-[1px] opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
                 {/* Project Info */}
                 <div className="w-full max-w-[260px] rounded-xl border border-zinc-200/80 bg-white/95 p-3 shadow-[0_4px_16px_rgba(16,24,40,0.12)]">
                     {/* Location */}
-                    <div className="flex items-center gap-2 border-b border-zinc-100 pb-2.5">
+                    <div className="flex items-center gap-2 pb-2.5">
                         <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100">
                             <MapPin size={16} className="text-zinc-600" />
                         </div>
@@ -118,6 +119,20 @@ export default function SampleCard2({
                             </div>
                             <div className="truncate text-xs font-semibold text-zinc-800">
                                 {project.owner.name}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 border-b border-zinc-100 py-2.5">
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100">
+                            <Folder size={16} className="text-zinc-600" />
+                        </div>
+
+                        <div className="min-w-0">
+                            <div className="text-[11px] font-medium text-zinc-400">
+                                Thư mục
+                            </div>
+                            <div className="truncate text-xs font-semibold text-zinc-800">
+                                {project.folder_name}
                             </div>
                         </div>
                     </div>
