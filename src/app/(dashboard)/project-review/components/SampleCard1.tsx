@@ -64,7 +64,7 @@ export default function SampleCard1({
             }
         >
             {/* Hover overlay */}
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-2xl bg-white/70 px-4 backdrop-blur-[4px] opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 rounded-1xl bg-white/70 px-4 backdrop-blur-[4px] opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
                 {/* Project Info */}
                 <div className="w-full max-w-[260px] rounded-xl border border-zinc-200/80 bg-white/95 p-3 shadow-[0_4px_16px_rgba(16,24,40,0.12)]">
                     {/* Location */}
