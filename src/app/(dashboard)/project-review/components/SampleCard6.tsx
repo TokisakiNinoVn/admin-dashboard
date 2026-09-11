@@ -123,7 +123,7 @@ export default function SampleCard3({
             </div> */}
 
             {/* Actions */}
-            <div className="mt-3 flex items-center justify-center gap- border-t border-zinc-100 pt-3">
+            <div className="mt-3 flex items-center justify-center pt-3">
                 <Tooltip title="Xem chi tiết">
                     <Button
                         type="default"

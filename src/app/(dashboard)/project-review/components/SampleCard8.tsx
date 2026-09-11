@@ -15,6 +15,7 @@ import {
     MapPin,
     SquarePen,
     Trash,
+    Folder
 } from "lucide-react";
 
 const { Paragraph, Text } = Typography;
@@ -59,6 +60,18 @@ export default function SampleCard1({
                     <div className="absolute bottom-2.5 left-3 z-10 flex max-w-[calc(100%-24px)] items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-zinc-800 shadow-[0_2px_6px_rgba(16,24,40,0.18)] backdrop-blur-sm">
                         <MapPin size={16} className="text-black" />
                         <span className="truncate">{project.location}</span>
+                    </div>
+
+                    {/* Media counts - góc phải trên */}
+                    <div className="absolute right-3 top-3 z-10 flex items-center gap-2">
+                        <div className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-zinc-800 shadow-[0_2px_6px_rgba(16,24,40,0.18)] backdrop-blur-sm">
+                            <Image size={14} />
+                            <span>{project.media.images}</span>
+                        </div>
+                        <div className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-zinc-800 shadow-[0_2px_6px_rgba(16,24,40,0.18)] backdrop-blur-sm">
+                            <Clapperboard size={14} />
+                            <span>{project.media.videos}</span>
+                        </div>
                     </div>
                 </div>
             }
@@ -187,17 +200,10 @@ export default function SampleCard1({
                     </Text>
                 </Space>
 
-                <Space size="middle">
-                    <Text className="text-md flex items-center gap-1">
-                        <Image size={16} />
-                        {project.media.images}
-                    </Text>
-
-                    <Text className="text-md flex items-center gap-1">
-                        <Clapperboard size={16} />
-                        {project.media.videos}
-                    </Text>
-                </Space>
+                <Text className="text-md flex items-center gap-1">
+                    <Folder size={16} />
+                    {project.folder_name}
+                </Text>
             </div>
         </Card>
     );

@@ -100,7 +100,7 @@ export default function SampleCard3({
                 </Text>
             </div>
 
-            <div className="mt-3 flex items-center justify-between border-t border-zinc-100 pt-3">
+            <div className="mt-3 flex items-center justify-between pt-3">
                 {/* Owner */}
                 <Space size={8}>
                     <Avatar size={22} className="text-[11px]">

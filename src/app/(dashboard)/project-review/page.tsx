@@ -34,6 +34,8 @@ import SampleCard3 from "./components/SampleCard3";
 import SampleCard4 from "./components/SampleCard4";
 import SampleCard5 from "./components/SampleCard5";
 import SampleCard6 from "./components/SampleCard6";
+import SampleCard7 from "./components/SampleCard7";
+import SampleCard8 from "./components/SampleCard8";
 
 const { Title, Text } = Typography;
 
@@ -56,6 +58,8 @@ const SAMPLE_TYPES = [
   { key: "mau-4", label: "Mẫu 4", Card: SampleCard4 },
   { key: "mau-5", label: "Mẫu 5", Card: SampleCard5 },
   { key: "mau-6", label: "Mẫu 6", Card: SampleCard6 },
+  // { key: "mau-7", label: "Mẫu 7", Card: SampleCard7 },
+  { key: "mau-8", label: "Mẫu 8", Card: SampleCard8 },
 ] as const;
 
 type DeviceKey = "mobile" | "tablet" | "pc";
