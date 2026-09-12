@@ -51,7 +51,7 @@ export default function SampleCard2({
             />
 
             {/* Gradient mờ từ dưới lên cho nội dung */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
             {/* Status tag - góc trái trên */}
             <div className="absolute left-3 top-3 z-10">
